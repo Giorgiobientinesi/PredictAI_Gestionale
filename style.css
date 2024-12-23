@@ -1,0 +1,218 @@
+/* style.css */
+div.stButton > button:first-child {
+    background-color: #ceadde;
+    color: white;
+    height: auto;
+    width: 100%;
+    font-size: 3.5em;
+    align: center;
+}
+
+div.stButton > button:first-child:hover {
+    background-color: #black; /* Soft background color */
+    color: white; /* White text color for contrast */
+    height: auto; /* Automatically adjusts height based on content */
+    width: 100%; /* Takes full width of the parent container */
+    font-size: 2.5em; /* Better font size for readability */
+    text-align: center; /* Center-align text */
+    padding: 0.5em 2em; /* Adds padding for a more spacious button */
+    border-radius: 8px; /* Slightly rounded corners for a modern look */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adds a soft shadow for depth */
+    cursor: pointer; /* Changes cursor to pointer for better UX */
+    transition: all 0.3s ease; /* Smooth transition for all properties */
+}
+
+
+h1 {
+    color: #black; /* Colore del testo nero */
+    font-size: 3.5em; /* Font più piccolo */
+    font-weight: bold;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background-color: #ceadde; /* Sfondo grigio chiaro */
+    padding: 10px 0;
+    border-bottom: 2px solid #a170a7; /* Linea sottile in fondo al testo */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Leggera ombra attorno al testo */
+}
+
+h3 {
+    color: #4a4a4a; /* Grigio scuro */
+    font-size: 2em; /* Font più piccolo rispetto a h1 */
+    font-weight: semi-bold;
+    text-align: left; /* Allineato a sinistra */
+    margin-top: 15px;
+    margin-bottom: 20px;
+    font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background-color: #e6d3ef; /* Sfondo viola pastello */
+    padding: 8px 15px; /* Più contenuto rispetto a h1 */
+    border-left: 5px solid #a170a7; /* Linea verticale colorata */
+    border-radius: 5px; /* Angoli leggermente arrotondati */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.08); /* Leggera ombra */
+}
+
+/* Stile per Promozioni Attive Oggi */
+h3.today {
+    color: #1f5a22; /* Verde per indicare "oggi" */
+    font-size: 2em;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background-color: #dff5df; /* Verde chiaro come sfondo */
+    padding: 10px 20px;
+    border-left: 5px solid #3fa33f; /* Linea verde scuro a sinistra */
+    border-radius: 8px; /* Angoli arrotondati */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.08); /* Leggera ombra */
+}
+
+/* Stile per Promozioni Future */
+h3.tomorrow {
+    color: #1b5eaa; /* Blu per indicare il futuro */
+    font-size: 2em;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background-color: #e1f0fc; /* Blu chiaro come sfondo */
+    padding: 10px 20px;
+    border-left: 5px solid #2874c6; /* Linea blu più scuro a sinistra */
+    border-radius: 8px; /* Angoli arrotondati */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.08); /* Leggera ombra */
+}
+
+/* style.css */
+
+
+a[data-testid="stSidebarNavLink"] {
+    font-size: 1.2em; /* Larger font size for better readability */
+    font-weight: bold; /* Make all text bold */
+    color: #1a1a1a; /* Darker color for better contrast and readability */
+    text-align: center; /* Center-align the text */
+    text-decoration: none; /* Remove default underline */
+    font-family: 'San Francisco', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; /* Modern font family */
+    display: inline-block; /* Treat the links like buttons */
+    padding: 10px 10px; /* Add padding for better click area */
+    padding-left: 30px; /* Add more padding to the left for better alignment */
+    margin: 6px 0; /* Space between links */
+    border-radius: 6px; /* Rounded corners for a soft look */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+    background-color: #f7f7f7; /* Subtle background color */
+}
+
+a[data-testid="stSidebarNavLink"]:hover {
+    color: #ffffff; /* White text on hover for contrast */
+    background-color: #ceadde; /* Blue background on hover */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+}
+
+a[data-testid="stSidebarNavLink"]:focus {
+    outline: 3px solid #black; /* Golden outline when focused */
+    background-color: #ceadde; /* Keep the hover background when focused */
+}
+
+/* Add active state for when the link is clicked */
+a[data-testid="stSidebarNavLink"]:active {
+    background-color: #ceadde; /* Slightly darker blue for active state */
+}
+
+/* Optional: Style the entire sidebar */
+section[data-testid="stSidebarNavLink"] {
+    font-size: 2.5em; /* Increase the size of regular text */
+    font-weight: bold; /* Make regular text bold */
+    color: #444444; /* Slightly lighter gray for contrast */
+    background-color: #f4f4f9; /* Set a light background color */
+}
+
+/* Optional: Change background color on hover for the sidebar */
+section[data-testid="stSidebar"]:hover {
+    background-color: #f4f4f9; /* Lighter background when hovered */
+}
+
+
+img[data-testid="stLogo"] {
+    height: 8rem;          /* Increase the height */
+    margin-bottom: 0px;   /* Add space below */
+    display: block;        /* Treat the image as a block element */
+}
+
+
+ .stSelectbox {
+    width: 100%;
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 32px;
+    transition: all 0.3s ease-in-out;
+  }
+
+.stSelectbox:hover {
+background: #ceadde;
+box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+
+ .stMultiSelect {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease-in-out;
+  }
+
+.stMultiSelect:hover {
+background: #ceadde;
+box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Stile generale per la pagina */
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Layout delle card */
+.promo-card {
+    background-color: #f5f5f5;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 10px 5px;
+    text-align: center;
+}
+
+.promo-card h4 {
+    margin: 0;
+    color: #333;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.promo-card p {
+    margin: 5px 0 0;
+    color: #555;
+    font-size: 14px;
+}
+
+/* Card per promozioni attive */
+.promo-card.attive {
+    background-color: #dff7df;
+    border-left: 4px solid #4caf50;
+}
+
+/* Card per promozioni future */
+.promo-card.future {
+    background-color: #f7f7df;
+    border-left: 4px solid #ff9800;
+}
+
+/* Responsive design */
+@media screen and (max-width: 768px) {
+    .promo-card {
+        margin: 10px 0;
+    }
+}
+
+
+</style>

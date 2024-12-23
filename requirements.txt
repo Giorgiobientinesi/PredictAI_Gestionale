@@ -1,0 +1,11 @@
+pandas
+boto3
+math
+datetime
+prophet
+locale
+st_aggrid
+io
+re
+streamlit
+python-dotenv
