@@ -20,9 +20,9 @@ def initialize_s3():
 def initialize_s3():
     s3 = boto3.client(
         's3',
-        st.secrets["AWS_ACCESS_KEY_ID"],
-        st.secrets["AWS_SECRET_ACCESS_KEY"],
-        st.secrets["AWS_REGION"]
+        aws_access_key_id = st.secrets["AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key = st.secrets["AWS_SECRET_ACCESS_KEY"],
+        region_name = st.secrets["AWS_REGION"]
     )
     return s3
 
