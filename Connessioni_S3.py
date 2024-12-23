@@ -15,8 +15,8 @@ def initialize_s3():
         region_name=os.getenv('AWS_REGION')  # Load the region from the .env file
     )
     return s3
-'''
 
+'''
 def initialize_s3():
     s3 = boto3.client(
         's3',
