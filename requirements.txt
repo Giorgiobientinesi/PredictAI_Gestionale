@@ -7,3 +7,4 @@ python-dotenv
 streamlit-aggrid
 streamlit_antd_components
 openpyxl
+xlrd
