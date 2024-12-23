@@ -3,12 +3,8 @@ import pandas as pd
 import os
 import io
 from dotenv import load_dotenv
+import streamlit as streamlit
 
-load_dotenv()
-
-st.secrets["AWS_ACCESS_KEY_ID"]
-st.secrets["AWS_SECRET_ACCESS_KEY"]
-st.secrets["AWS_REGION"]
 
 def initialize_s3():
     s3 = boto3.client(
