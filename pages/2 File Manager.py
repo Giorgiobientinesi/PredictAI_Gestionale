@@ -9,7 +9,7 @@ from datetime import datetime
 import streamlit_antd_components as sac
 
 st.set_page_config(layout="wide")
-st.logo("assets/logo.svg",size="large")
+#st.logo("assets/logo.svg",size="large")
 
 if "file_temp_vendite" not in st.session_state:
     st.session_state["file_temp_vendite"] = pd.DataFrame()

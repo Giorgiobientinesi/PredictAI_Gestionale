@@ -20,7 +20,7 @@ negozio = "todis-viacastelporziano294"
 if "inventario" not in st.session_state:
     st.session_state["inventario"] = pd.DataFrame()
 
-st.logo("assets/logo.svg",size="large")
+#st.logo("assets/logo.svg",size="large")
 
 # Barra di ricerca
 search_text = st.text_input("Cerca prodotto per descrizione:")
