@@ -6,3 +6,4 @@ streamlit == 1.39.0
 python-dotenv
 streamlit-aggrid
 streamlit_antd_components
+openpyxl
