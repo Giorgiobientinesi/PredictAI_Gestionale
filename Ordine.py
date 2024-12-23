@@ -108,7 +108,7 @@ if st.session_state["murale_numero"] != "":
     st.session_state["vendite_storiche"] = vendite_storiche
 
 
-    locale.setlocale(locale.LC_TIME, "it_IT.UTF-8")
+    locale.setlocale(locale.LC_TIME, "C")
     oggi = datetime.now().date()
     nome_giorno = oggi.strftime("%A")
 
