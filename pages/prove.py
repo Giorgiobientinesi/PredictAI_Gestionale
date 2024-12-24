@@ -6,8 +6,6 @@ import streamlit as st
 
 from Utils import load_inventario
 
-load_dotenv()
+current_directory = os.getcwd()
 
-st.write(os.getenv('AWS_ACCESS_KEY_ID'))
-
-inventario = load_inventario(murale="murale-300")
+st.write(current_directory)
