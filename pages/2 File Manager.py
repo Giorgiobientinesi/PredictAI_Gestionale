@@ -126,11 +126,12 @@ if subtables == "Acquisti":
 
                     if uploaded_file_acquisti and len(num_fattura) > 0:
 
-                        fatture_esistenti = pd.read_excel("files_utili/fatture.xls")
-                        fatture_esistenti = list(fatture_esistenti["Numeri"])
+                        fatture_esistenti = pd.read_excel("files_utili/fatture.xlsx")
+                        fatture_esistenti_list = list(fatture_esistenti["Numeri"].astype(str))
 
-                        if num_fattura in fatture_esistenti:
+                        if num_fattura in fatture_esistenti_list:
                             st.warning("Fattura già presente nel database. Inserire un'altra fattura.")
+                            break
                         else:
                             if uploaded_file_acquisti.name.endswith(".csv"):
                                 st.session_state["uploaded_file_acquisti"] = uploaded_file_acquisti
@@ -139,9 +140,6 @@ if subtables == "Acquisti":
                                 except:
                                     df = pd.read_csv(st.session_state["uploaded_file_acquisti"], sep=";", encoding='latin-1')
 
-                                st.write(df)
-                                st.write(len(df))
-
                                 df_pulito = pulisci_fattura_oggi(df)
                                 st.session_state["file_temp_acquisti_pulito"] = df_pulito
                                 st.session_state["file_temp_acquisti_pulito"]["fattura"] = num_fattura
@@ -149,7 +147,7 @@ if subtables == "Acquisti":
 
                                 giorno = giorno.replace("/", "_")
                                 nome_file_s3 = f"Acquisti_{giorno}.csv"
-
+                                
                                 upload_dataframe_as_csv(
                                     st.session_state["file_temp_acquisti_pulito"],
                                     negozio,
@@ -163,9 +161,11 @@ if subtables == "Acquisti":
                                     f"{st.session_state['murale']}/Acquisti_giornalieri",
                                     nome_file_s3,
                                 )
-
-                                fatture_esistenti = fatture_esistenti.append({"Numeri":num_fattura},ignore_index=True)
-                                fatture_esistenti.to_excel("files_utili/fatture.xls",index=False)
+                                
+                                nuova_riga = pd.DataFrame([{"Numeri": num_fattura}])
+                                st.write(nuova_riga)
+                                fatture_esistenti = pd.concat([fatture_esistenti, nuova_riga], ignore_index=True)
+                                fatture_esistenti.to_excel("files_utili/fatture.xlsx",index=False)
 
                                 st.rerun()
 
