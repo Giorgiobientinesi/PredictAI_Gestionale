@@ -126,7 +126,11 @@ if subtables == "Acquisti":
 
                     if uploaded_file_acquisti and len(num_fattura) > 0:
                         if uploaded_file_acquisti.name.endswith(".csv"):
-                            df = pd.read_csv(uploaded_file_acquisti, sep=",", encoding='latin-1')
+                            st.session_state["uploaded_file_acquisti"] = uploaded_file_acquisti
+                            try:
+                                df = pd.read_csv(uploaded_file_acquisti, sep=",", encoding='latin-1')
+                            except:
+                                df = pd.read_csv(st.session_state["uploaded_file_acquisti"], sep=";", encoding='latin-1')
 
                             st.write(df)
                             st.write(len(df))
