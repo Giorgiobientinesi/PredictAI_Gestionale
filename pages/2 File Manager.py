@@ -125,39 +125,49 @@ if subtables == "Acquisti":
                     st.divider()
 
                     if uploaded_file_acquisti and len(num_fattura) > 0:
-                        if uploaded_file_acquisti.name.endswith(".csv"):
-                            st.session_state["uploaded_file_acquisti"] = uploaded_file_acquisti
-                            try:
-                                df = pd.read_csv(uploaded_file_acquisti, sep=",", encoding='latin-1')
-                            except:
-                                df = pd.read_csv(st.session_state["uploaded_file_acquisti"], sep=";", encoding='latin-1')
 
-                            st.write(df)
-                            st.write(len(df))
+                        fatture_esistenti = pd.read_excel("files_utili/fatture.xls")
+                        fatture_esistenti = list(fatture_esistenti["Numeri"])
 
-                            df_pulito = pulisci_fattura_oggi(df)
-                            st.session_state["file_temp_acquisti_pulito"] = df_pulito
-                            st.session_state["file_temp_acquisti_pulito"]["fattura"] = num_fattura
+                        if num_fattura in fatture_esistenti:
+                            st.warning("Fattura già presente nel database. Inserire un'altra fattura.")
+                        else:
+                            if uploaded_file_acquisti.name.endswith(".csv"):
+                                st.session_state["uploaded_file_acquisti"] = uploaded_file_acquisti
+                                try:
+                                    df = pd.read_csv(uploaded_file_acquisti, sep=",", encoding='latin-1')
+                                except:
+                                    df = pd.read_csv(st.session_state["uploaded_file_acquisti"], sep=";", encoding='latin-1')
+
+                                st.write(df)
+                                st.write(len(df))
+
+                                df_pulito = pulisci_fattura_oggi(df)
+                                st.session_state["file_temp_acquisti_pulito"] = df_pulito
+                                st.session_state["file_temp_acquisti_pulito"]["fattura"] = num_fattura
 
 
-                            giorno = giorno.replace("/", "_")
-                            nome_file_s3 = f"Acquisti_{giorno}.csv"
+                                giorno = giorno.replace("/", "_")
+                                nome_file_s3 = f"Acquisti_{giorno}.csv"
 
-                            upload_dataframe_as_csv(
-                                st.session_state["file_temp_acquisti_pulito"],
-                                negozio,
-                                f"{st.session_state['murale']}/Acquisti_giornalieri_puliti",
-                                nome_file_s3,
-                            )
+                                upload_dataframe_as_csv(
+                                    st.session_state["file_temp_acquisti_pulito"],
+                                    negozio,
+                                    f"{st.session_state['murale']}/Acquisti_giornalieri_puliti",
+                                    nome_file_s3,
+                                )
 
-                            upload_dataframe_as_csv(
-                                st.session_state["file_temp_acquisti"],
-                                negozio,
-                                f"{st.session_state['murale']}/Acquisti_giornalieri",
-                                nome_file_s3,
-                            )
+                                upload_dataframe_as_csv(
+                                    st.session_state["file_temp_acquisti"],
+                                    negozio,
+                                    f"{st.session_state['murale']}/Acquisti_giornalieri",
+                                    nome_file_s3,
+                                )
 
-                            st.rerun()
+                                fatture_esistenti = fatture_esistenti.append({"Numeri":num_fattura},ignore_index=True)
+                                fatture_esistenti.to_excel("files_utili/fatture.xls",index=False)
+
+                                st.rerun()
 
 
 

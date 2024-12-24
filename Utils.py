@@ -378,7 +378,7 @@ def master_job_aggiornamento():
 
 def terminalino(ordine):
     info_terminalino = pd.read_excel(
-        "cosi infernetto.xls")
+        "files_utili/cosi infernetto.xls")
 
     ordine = ordine[ordine["pacchi_da_ordinare"] != 0]
     info_terminalino = info_terminalino.dropna(subset="cod. term.")
