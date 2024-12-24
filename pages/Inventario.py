@@ -5,8 +5,9 @@ from datetime import datetime, timedelta
 import time
 from Connessioni_S3 import read_csv_from_s3, upload_dataframe_as_csv, create_directory, list_directory_contents,file_exists_in_s3
 import pandas as pd
-from Utils import filter_dataframe, trova_data_file, pulisci_vendite_oggi, pulisci_fatture_oggi,aggiorna_vendite_storiche,load_inventario
+from Utils import filter_dataframe, trova_data_file, pulisci_vendite_oggi, pulisci_fatture_oggi,aggiorna_vendite_storiche,load_inventario,create_excel_file
 from datetime import datetime
+from io import BytesIO
 
 
 st.set_page_config(layout="wide")
@@ -48,6 +49,16 @@ for i, murale in enumerate(unique_murales):
         st.write(st.session_state["murale"])
         # Filtra il DataFrame per il murale corrente
         inventario_df = load_inventario(murale)
+        inventario_excel = create_excel_file(inventario_df)
+        
+        st.download_button(
+                    label="Download File Inventario",
+                    data=inventario_excel,
+                    file_name="Inventario_attuale.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )        
+        
+
         st.session_state["inventario"] = inventario_df
 
         inventario_df = filter_dataframe(search_text, inventario_df)

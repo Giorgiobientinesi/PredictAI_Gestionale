@@ -214,5 +214,25 @@ body {
     }
 }
 
+button[data-testid="stBaseButton-secondary"] {
+    color: #333333; /* Default text color */
+    background-color: #f2f2f2; /* Default background color */
+    border-radius: 10px; /* More rounded corners */
+    padding: 15px 30px; /* Increased padding for larger button */
+    border: none; /* Remove default border */
+    font-size: 18px; /* Larger font size */
+    font-weight: bold; /* Bold text for emphasis */
+    width: 250px; /* Fixed button width */
+    height: 70px; /* Fixed button height */
+    text-align: center; /* Center align text */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+/* Hover effect */
+button[data-testid="stBaseButton-secondary"]:hover {
+    color: #ffffff; /* White text on hover */
+    background-color: #ceadde; /* Custom background on hover */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow */
+}
 
 </style>

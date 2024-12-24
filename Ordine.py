@@ -328,7 +328,7 @@ if st.session_state["murale_numero"] != "":
                 st.download_button(
                     label="Download File Terminalino",
                     data=output,
-                    file_name="ordine_automatico.txt",
+                    file_name="cosi infernetto.txt",
                     mime="text/plain"
                 )
 

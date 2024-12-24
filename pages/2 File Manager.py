@@ -87,7 +87,7 @@ if subtables=="Vendite":
             with st.container(border=True):
 
                 # Crea il file uploader per ciascun giorno
-                uploaded_file_vendite = st.file_uploader(f"Carica il file di vendite per il {giorno}", type=["csv", "xlsx"])
+                uploaded_file_vendite = st.file_uploader(f"Carica il file di vendite per il {giorno}", type=["csv"])
                 if uploaded_file_vendite:
                     if uploaded_file_vendite.name.endswith('.CSV'):
                         df = pd.read_csv(uploaded_file_vendite, sep=';', encoding='latin-1')
@@ -116,7 +116,7 @@ if subtables == "Acquisti":
                 giorno = giorno.replace("-", "/")
                 with st.container(border=True):
                     uploaded_file_acquisti = st.file_uploader(
-                        f"Carica il file di acquisti per il {giorno}", type=["csv", "xlsx"]
+                        f"Carica il file di acquisti per il {giorno}", type=["csv"]
                     )
                     num_fattura = st.text_input("Inserisci numero fattura", key=f"fattura_{giorno}")
 
