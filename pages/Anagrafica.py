@@ -12,7 +12,7 @@ if "anagrafica" not in st.session_state:
 if "murale" not in st.session_state:
     st.session_state["murale"] = "murale-300"
 
-#st.logo("assets/logo.svg",size="large")
+st.logo("assets/Logo.svg",size="large")
 
 with open("style.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
