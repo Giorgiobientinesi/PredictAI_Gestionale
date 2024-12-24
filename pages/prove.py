@@ -8,4 +8,4 @@ from Utils import load_inventario
 
 current_directory = os.getcwd()
 
-st.write(current_directory)
+st.write(os.listdir(current_directory))
