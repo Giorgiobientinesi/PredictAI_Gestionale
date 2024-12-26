@@ -425,7 +425,7 @@ def terminalino(ordine):
             ordine_automatico['tipo ean'].astype(str) +
             ordine_automatico['cod. articolo'].astype(str) +
             ordine_automatico['variante'].astype(str) +
-            ordine_automatico['quantità'].astype(int).astype(str)
+            ordine_automatico['quantità'].astype(str)
     )
 
     return ordine_automatico
