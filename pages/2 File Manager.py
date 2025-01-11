@@ -121,16 +121,19 @@ if subtables=="Vendite":
                         st.session_state["file_temp_vendite"] = df
                         st.session_state["file_temp_vendite_pulito"] = df_pulito
 
-                    giorno = giorno.replace("/","_")
-                    nome_file_s3 = f"Vendite_{giorno}.CSV"  # Adatta l'estensione se necessario
-                    nome_file_s3_pulito = f"Vendite_{giorno}.csv"  # Adatta l'estensione se necessario
+                        giorno = giorno.replace("/","_")
+                        nome_file_s3 = f"Vendite_{giorno}.CSV"  # Adatta l'estensione se necessario
+                        nome_file_s3_pulito = f"Vendite_{giorno}.csv"  # Adatta l'estensione se necessario
 
-                    st.dataframe(st.session_state["file_temp_vendite_pulito"])
+                        st.dataframe(st.session_state["file_temp_vendite_pulito"])
 
-                    upload_dataframe_as_csv(st.session_state["file_temp_vendite"], negozio, "{}/Vendite_giornaliere".format(st.session_state["murale"]), nome_file_s3)
-                    upload_dataframe_as_csv(st.session_state["file_temp_vendite_pulito"], negozio, "{}/Vendite_giornaliere_pulite".format(st.session_state["murale"]), nome_file_s3_pulito)
+                        upload_dataframe_as_csv(st.session_state["file_temp_vendite"], negozio, "{}/Vendite_giornaliere".format(st.session_state["murale"]), nome_file_s3)
+                        upload_dataframe_as_csv(st.session_state["file_temp_vendite_pulito"], negozio, "{}/Vendite_giornaliere_pulite".format(st.session_state["murale"]), nome_file_s3_pulito)
 
-                    st.rerun()
+                        st.rerun()
+                    else:
+                        st.error("Il file caricato non è valido.")
+
 
 
 
@@ -179,10 +182,7 @@ if subtables == "Acquisti":
                         )
 
 
-
-
                     if uploaded_file_acquisti and len(num_fattura) > 0:
-
                         fatture_esistenti = pd.read_excel("files_utili/fatture.xlsx")
                         fatture_esistenti_list = list(fatture_esistenti["Numeri"].astype(str))
 
@@ -196,6 +196,8 @@ if subtables == "Acquisti":
                                     df = pd.read_csv(uploaded_file_acquisti, sep=",", encoding='latin-1')
                                 except:
                                     df = pd.read_csv(st.session_state["uploaded_file_acquisti"], sep=";", encoding='latin-1')
+                                
+                                st.session_state["uploaded_file_acquisti"] = df
 
                                 df_pulito = pulisci_fattura_oggi(df)
                                 st.session_state["file_temp_acquisti_pulito"] = df_pulito
@@ -213,7 +215,7 @@ if subtables == "Acquisti":
                                 )
 
                                 upload_dataframe_as_csv(
-                                    st.session_state["file_temp_acquisti"],
+                                    st.session_state["uploaded_file_acquisti"],
                                     negozio,
                                     f"{st.session_state['murale']}/Acquisti_giornalieri",
                                     nome_file_s3,
@@ -225,6 +227,9 @@ if subtables == "Acquisti":
                                 fatture_esistenti.to_excel("files_utili/fatture.xlsx",index=False)
 
                                 st.rerun()
+                            else:
+                                st.error("Il file caricato non è valido.")
+
 
 
 

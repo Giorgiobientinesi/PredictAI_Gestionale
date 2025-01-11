@@ -203,7 +203,7 @@ body {
 
 /* Card per promozioni future */
 .promo-card.future {
-    background-color: #f7f7df;
+    background-color: #ff9800;
     border-left: 4px solid #ff9800;
 }
 

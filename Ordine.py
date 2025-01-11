@@ -121,8 +121,6 @@ if st.session_state["murale_numero"] != "":
 
 
 
-
-
     col1,col2,col3 = st.columns(3)
     if data_piu_recente_inventario == oggi and data_piu_recente_storico.date() == oggi-timedelta(1) :
         # Step 4: Carica l'anagrafica
@@ -239,6 +237,11 @@ if st.session_state["murale_numero"] != "":
 
                     chiavi.append(key)
                     descrizioni.append(descrizione_prodotto)
+                
+                else:
+                    previsioni.append(0)
+                    chiavi.append(key)
+                    descrizioni.append(Murale[Murale["Key"]==key]["Descrizione"].iloc[0])
 
             Dataframe_previsioni = pd.DataFrame()
             Dataframe_previsioni["Key"] = chiavi
@@ -320,8 +323,6 @@ if st.session_state["murale_numero"] != "":
 
                 dati_modificati = pd.DataFrame(grid_response['data']) if grid_response['data'] is not None else st.session_state["genera_ordine"]
 
-                #if grid_response['data'] is not None:
-                    #st.session_state.genera_ordine = pd.DataFrame(grid_response['data'])
 
                 ordine_automatico = terminalino(dati_modificati)
                 output = StringIO()
@@ -342,11 +343,9 @@ if st.session_state["murale_numero"] != "":
                 st.download_button(
                     label="Download Excel File",
                     data=excel_file,
-                    file_name="PredictAI_ordine.xlsx",
+                    file_name="PredictAI_ordine_{}.xlsx".format(oggi.strftime("%d-%m-%Y")),
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 )
-
-
 
 
 

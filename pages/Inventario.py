@@ -61,6 +61,11 @@ for i, murale in enumerate(unique_murales):
 
         st.session_state["inventario"] = inventario_df
 
+        inventario_negativo = inventario_df[inventario_df["Stock"] < 0]
+        if not inventario_negativo.empty:
+            st.warning("Ci sono prodotti con stock negativo!")
+            st.write(inventario_negativo)
+
         inventario_df = filter_dataframe(search_text, inventario_df)
 
         st.session_state["murale"] = murale
