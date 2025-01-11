@@ -5,7 +5,7 @@ import io
 from dotenv import load_dotenv
 import streamlit as st
 
-'''
+
 load_dotenv()
 def initialize_s3():
     s3 = boto3.client(
@@ -25,7 +25,7 @@ def initialize_s3():
         region_name = st.secrets["AWS_REGION"]
     )
     return s3
-
+'''
 
 def read_csv_from_s3(bucket_name, directory, file_name,delimiter):
     s3 = initialize_s3()

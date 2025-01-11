@@ -312,13 +312,18 @@ if st.session_state["murale_numero"] != "":
             with st.popover("Visualizza e Modifica ordine",use_container_width=True):
                 grid_options = GridOptionsBuilder.from_dataframe(st.session_state["genera_ordine"])
                 grid_options.configure_column('pacchi_da_ordinare', editable=True)  # You can enable specific columns
+                grid_options = grid_options.build()
 
                 # Display the editable DataFrame
-                grid_response = AgGrid(st.session_state["genera_ordine"], gridOptions=grid_options.build(), editable=True)
+                grid_response = AgGrid(st.session_state["genera_ordine"], editable=True,GridUpdateMode='VALUE_CHANGE')
 
-                st.session_state["genera_ordine"] = grid_response['data']
 
-                ordine_automatico = terminalino(st.session_state["genera_ordine"])
+                dati_modificati = pd.DataFrame(grid_response['data']) if grid_response['data'] is not None else st.session_state["genera_ordine"]
+
+                #if grid_response['data'] is not None:
+                    #st.session_state.genera_ordine = pd.DataFrame(grid_response['data'])
+
+                ordine_automatico = terminalino(dati_modificati)
                 output = StringIO()
                 for line in ordine_automatico['formattato']:
                     output.write(line + '\n')
@@ -332,7 +337,7 @@ if st.session_state["murale_numero"] != "":
                     mime="text/plain"
                 )
 
-                excel_file = create_excel_file(st.session_state["genera_ordine"])
+                excel_file = create_excel_file(dati_modificati)
 
                 st.download_button(
                     label="Download Excel File",
@@ -340,6 +345,7 @@ if st.session_state["murale_numero"] != "":
                     file_name="PredictAI_ordine.xlsx",
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 )
+
 
 
 
