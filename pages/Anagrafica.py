@@ -52,11 +52,14 @@ with st.popover("Aggiungi un Prodotto"):  #Questo ragiona in maniera separata da
     UnitàXpacco_articolo = st.number_input("Inserisci le Unità x Pacco",min_value=1,step=1)
     murale_articolo = st.selectbox("Murale di Appartenenza",unique_murales)
     Scaffale_articolo = st.number_input("Inserisci quanta quantità ne vuoi in Scaffale. Lasciare 999 per default predict.",value=999)
+    Prezzo_Acquisto_articolo = st.number_input("Inserisci il Prezzo di Acquisto",min_value=0.0,step=0.01)
+    Prezzo_Vendita_articolo = st.number_input("Inserisci il Prezzo di Vendita",min_value=0.0,step=0.01)
+
     aggiungi_articolo = st.button("A")
 
 
     if aggiungi_articolo:
-        nuovo_prodotto = pd.DataFrame([[Key_articolo,Descrizione_articolo,UnitàXpacco_articolo,Scaffale_articolo,murale_articolo]],columns=filtered_df.columns)
+        nuovo_prodotto = pd.DataFrame([[Key_articolo,Descrizione_articolo,UnitàXpacco_articolo,Scaffale_articolo,murale_articolo,Prezzo_Acquisto_articolo,Prezzo_Vendita_articolo]],columns=filtered_df.columns)
         if Key_articolo not in list(st.session_state["anagrafica"]["Key"]):
             st.session_state["anagrafica"] = pd.concat([st.session_state["anagrafica"],nuovo_prodotto])
             st.session_state["anagrafica"]["Murale"] = st.session_state["anagrafica"]["Murale"].astype(str).str.split(".").str[0]
@@ -80,6 +83,7 @@ with st.popover("Aggiungi un Prodotto"):  #Questo ragiona in maniera separata da
                                         st.session_state["murale"] + "/Inventari", file_piu_recente_inventario)
 
             st.success("Anagrafica e Inventario aggiornata correttamente!")
+            time.sleep(5)
             st.rerun()
         else:
             st.error("Il prodotto è già presente nell'anagrafica. Usa la barra di ricerca per vederlo.")
@@ -92,6 +96,8 @@ if salva:
 
 
 tabs = st.tabs([f"Murale {murale}" for murale in unique_murales])
+
+
 
 
 # Crea una scheda per ciascun "Murale"
@@ -114,11 +120,17 @@ for i, murale in enumerate(unique_murales):
                             st.markdown(f" Unità Imballo:  {row['Imb.']}")
                         with st.container(border=True):
                             st.write(f"**Key**: {row['Key']}")
+                        with st.container(border=True):
+                            st.write(f"**Prezzo di Acquisto**: {row['Prezzo Acquisto']}")
+                        with st.container(border=True):
+                            st.write(f"**Prezzo di Vendita**: {row['Prezzo Vendita']}")
                         # Imposta il campo Scaffale come numero intero positivo
                         with st.container(border=True):
                             new_value = st.number_input(
                                 "Scaffale", value=row["Scaffale"], min_value=0, step=1, key=f"{row['Key']}_scaffale"
                             )
+
+
                         # Aggiorna il valore nel session_state
                         st.session_state["anagrafica"].at[row.name, "Scaffale"] = new_value
 

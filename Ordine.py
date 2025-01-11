@@ -124,7 +124,16 @@ if st.session_state["murale_numero"] != "":
     col1,col2,col3 = st.columns(3)
     if data_piu_recente_inventario == oggi and data_piu_recente_storico.date() == oggi-timedelta(1) :
         # Step 4: Carica l'anagrafica
-        anagrafica = read_csv_from_s3(negozio, "Anagrafica", "Anagrafica.csv",delimiter=",")
+        anagrafica = read_csv_from_s3(negozio,"Anagrafica","Anagrafica.csv",delimiter=",")  #qua ci deve stare l'anagrafica generica di tutti i murali
+
+        try:
+            if not anagrafica or anagrafica.empty:
+                anagrafica = read_csv_from_s3(negozio, "Anagrafica", "Anagrafica.csv",
+                                            delimiter=";")  # qua ci deve stare l'anagrafica generica di tutti i murali
+        except:
+            pass
+
+
         st.session_state["anagrafica"] = anagrafica
         st.session_state["anagrafica_scopo"] = st.session_state["anagrafica"][st.session_state["anagrafica"]["Murale"] == int(st.session_state["murale_numero"])]
 
@@ -263,12 +272,17 @@ if st.session_state["murale_numero"] != "":
             pacchi_da_ordinare = []
             inventario = []
             previsioni_lista = []
+            prezzo_acquisto_lista = []
+            prezzo_vendita_lista = []
 
             for key in list(Dataframe_previsioni["Key"]):
                 if key in list(st.session_state["inventario"]["Key"]):
                     stock_scaffale = float(st.session_state["inventario"][st.session_state["inventario"]["Key"] == key]["Stock"])
                     previsioni = float(Dataframe_previsioni[Dataframe_previsioni["Key"] == key]["Previsione"])
                     minimo_ordine = st.session_state["anagrafica_scopo"][st.session_state["anagrafica_scopo"]["Key"] == key]["Imb."].iloc[0]
+
+                    prezzo_acquisto = st.session_state["anagrafica_scopo"][st.session_state["anagrafica_scopo"]["Key"] == key]["Prezzo Acquisto"].iloc[0]
+                    prezzo_vendita = st.session_state["anagrafica_scopo"][st.session_state["anagrafica_scopo"]["Key"] == key]["Prezzo Vendita"].iloc[0] 
 
                     if minimo_ordine == None:
                         minimo_ordine=1
@@ -295,6 +309,8 @@ if st.session_state["murale_numero"] != "":
                     pacchi_da_ordinare.append(ordine)
                     inventario.append(stock_scaffale)
                     previsioni_lista.append(previsioni)
+                    prezzo_acquisto_lista.append(prezzo_acquisto)
+                    prezzo_vendita_lista.append(prezzo_vendita)
 
 
             genera_ordine = pd.DataFrame()
@@ -304,15 +320,23 @@ if st.session_state["murale_numero"] != "":
             genera_ordine["pacchi_da_ordinare"] = pacchi_da_ordinare
             genera_ordine["inventario"] = inventario
             genera_ordine["previsioni_lista"] = previsioni_lista
+            genera_ordine["prezzo_acquisto"] = prezzo_acquisto_lista
+            genera_ordine["prezzo_vendita"] = prezzo_vendita_lista
 
 
             st.session_state["genera_ordine"] = genera_ordine
 
+            st.balloons()
 
-        st.divider()
 
-        if st.session_state["ordine_partito"] == 1:
-            with st.popover("Visualizza e Modifica ordine",use_container_width=True):
+
+        with st.container(border=True):
+
+            if st.session_state["ordine_partito"] == 1:
+                st.markdown("""<div style="text-align: center; margin: 50px 0;"><p style="font-size: 16px; color: #555;">Scorri per visualizzare e modificare l'ordine</p><div style="animation: bounce 1.5s infinite;"><span style="font-size: 32px; color: #888;">&#8595;</span></div></div><style>@keyframes bounce {0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);}60% {transform: translateY(-5px);}}</style>""",unsafe_allow_html=True)
+                st.subheader("Gestisci ordine")
+
+                #with st.popover("Visualizza e Modifica ordine",use_container_width=True):
                 grid_options = GridOptionsBuilder.from_dataframe(st.session_state["genera_ordine"])
                 grid_options.configure_column('pacchi_da_ordinare', editable=True)  # You can enable specific columns
                 grid_options = grid_options.build()
@@ -330,6 +354,10 @@ if st.session_state["murale_numero"] != "":
                     output.write(line + '\n')
                 output = output.getvalue()
 
+                prezzo_totale_ordine = sum(dati_modificati["pacchi_da_ordinare"]*dati_modificati["prezzo_acquisto"]*dati_modificati["Imballaggi"])
+
+                st.markdown(f"**Il prezzo totale dell'ordine è di: _{prezzo_totale_ordine:.2f} €_**", unsafe_allow_html=True)
+                
                 # Fornisci il file scaricabile
                 st.download_button(
                     label="Download File Terminalino",
