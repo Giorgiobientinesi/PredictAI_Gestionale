@@ -88,6 +88,31 @@ if subtables=="Vendite":
 
                 # Crea il file uploader per ciascun giorno
                 uploaded_file_vendite = st.file_uploader(f"Carica il file di vendite per il {giorno}", type=["csv"])
+                giorno_chiusura = st.checkbox("Negozio chiuso in questo giorno",key = giorno)
+
+                if giorno_chiusura:
+                    vendite_zero = pd.DataFrame()
+                    vendite_zero["Key"] = []
+                    vendite_zero["Descrizione"] = []
+                    vendite_zero["Quantità"] = []
+                    vendite_zero["ListinoCosto"] = []
+                    vendite_zero["ListinoPubblico"] = []
+                    vendite_zero["Data"] = []
+
+                    giorno = giorno.replace("-","/")
+                    st.session_state["file_temp_vendite"] = vendite_zero
+                    st.session_state["file_temp_vendite_pulito"] = vendite_zero
+                    giorno = giorno.replace("/","_")
+                    nome_file_s3 = f"Vendite_{giorno}.CSV"  # Adatta l'estensione se necessario
+                    nome_file_s3_pulito = f"Vendite_{giorno}.csv"  # Adatta l'estensione se necessario
+
+                    st.dataframe(st.session_state["file_temp_vendite_pulito"])
+                    upload_dataframe_as_csv(st.session_state["file_temp_vendite"], negozio, "{}/Vendite_giornaliere".format(st.session_state["murale"]), nome_file_s3)
+                    upload_dataframe_as_csv(st.session_state["file_temp_vendite_pulito"], negozio, "{}/Vendite_giornaliere_pulite".format(st.session_state["murale"]), nome_file_s3_pulito)
+
+                    st.rerun()
+
+
                 if uploaded_file_vendite:
                     if uploaded_file_vendite.name.endswith('.CSV'):
                         df = pd.read_csv(uploaded_file_vendite, sep=';', encoding='latin-1')
@@ -123,6 +148,38 @@ if subtables == "Acquisti":
                     # Create a unique key for each button
                     inserisci_key = f"inserisci_{giorno}"
                     st.divider()
+
+
+                    giorno_chiusura = st.checkbox("Negozio chiuso in questo giorno",key = giorno)
+
+                    if giorno_chiusura:
+                        acquisti_zero = pd.DataFrame()
+                        acquisti_zero["Key"] = []
+                        acquisti_zero["Descrizione"] = []
+                        acquisti_zero["Quantità"] = []
+                        acquisti_zero["fattura"] = []
+
+                        st.session_state["file_temp_acquisti_pulito"] = acquisti_zero
+                        st.session_state["uploaded_file_acquisti"] = acquisti_zero
+                        giorno = giorno.replace("/", "_")
+                        nome_file_s3 = f"Acquisti_{giorno}.csv"
+                        
+                        upload_dataframe_as_csv(
+                            st.session_state["file_temp_acquisti_pulito"],
+                            negozio,
+                            f"{st.session_state['murale']}/Acquisti_giornalieri_puliti",
+                            nome_file_s3,
+                        )
+
+                        upload_dataframe_as_csv(
+                            st.session_state["file_temp_acquisti"],
+                            negozio,
+                            f"{st.session_state['murale']}/Acquisti_giornalieri",
+                            nome_file_s3,
+                        )
+
+
+
 
                     if uploaded_file_acquisti and len(num_fattura) > 0:
 
