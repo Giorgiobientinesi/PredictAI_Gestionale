@@ -83,7 +83,7 @@ with st.popover("Aggiungi un Prodotto"):  #Questo ragiona in maniera separata da
                                         st.session_state["murale"] + "/Inventari", file_piu_recente_inventario)
 
             st.success("Anagrafica e Inventario aggiornata correttamente!")
-            time.sleep(2)
+            time.sleep(5)
             st.rerun()
         else:
             st.error("Il prodotto è già presente nell'anagrafica. Usa la barra di ricerca per vederlo.")
@@ -97,7 +97,6 @@ if salva:
 
 tabs = st.tabs([f"Murale {murale}" for murale in unique_murales])
 
-st.write(anagrafica)
 
 
 
@@ -134,8 +133,6 @@ for i, murale in enumerate(unique_murales):
 
                         # Aggiorna il valore nel session_state
                         st.session_state["anagrafica"].at[row.name, "Scaffale"] = new_value
-                        st.session_state["anagrafica"].at[row.name, "Prezzo Acquisto"] = new_value
-                        st.session_state["anagrafica"].at[row.name, "Prezzo Vendita"] = new_value
 
                         st.markdown("<span style='color:darkred; font-weight:bold;'>**Elimina prodotto**</span>", unsafe_allow_html=True)
                         delete = st.button("X", key=f'Elimina prodotto_{row["Key"]}')
