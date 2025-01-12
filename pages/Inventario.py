@@ -68,33 +68,36 @@ for i, murale in enumerate(unique_murales):
 
         inventario_df = filter_dataframe(search_text, inventario_df)
 
-        st.session_state["murale"] = murale
+        if len(inventario_df)>0:
+            st.session_state["murale"] = murale
 
-        # Gestisci la visualizzazione a righe con 3 prodotti per riga
-        num_cols = 3  # Numero di prodotti per riga
-        rows = [inventario_df.iloc[i : i + num_cols] for i in range(0, inventario_df.shape[0], num_cols)]
+            # Gestisci la visualizzazione a righe con 3 prodotti per riga
+            num_cols = 3  # Numero di prodotti per riga
+            rows = [inventario_df.iloc[i : i + num_cols] for i in range(0, inventario_df.shape[0], num_cols)]
 
-        for row_df in rows:
-            cols = st.columns(num_cols)
-            for col, (_, row) in zip(cols, row_df.iterrows()):
-                with col:
-                        # Layout migliorato per visualizzare le informazioni
-                        with st.container(border=True):
-                            st.write(f"**Key**: {row['Key']}")
-                            st.write(f"**Articolo**: {row['Descrizione']}")
-                        # Imposta il campo Scaffale come numero intero positivo
-                            new_value = st.number_input(
-                                "Stock", value=row["Stock"], min_value=0.0, step=0.01, key=f"{row['Key']}_stock"
-                            )
-                        # Aggiorna il valore nel session_state
-                        st.session_state["inventario"].at[row.name, "Stock"] = new_value
+            for row_df in rows:
+                cols = st.columns(num_cols)
+                for col, (_, row) in zip(cols, row_df.iterrows()):
+                    with col:
+                            # Layout migliorato per visualizzare le informazioni
+                            with st.container(border=True):
+                                st.write(f"**Key**: {row['Key']}")
+                                st.write(f"**Articolo**: {row['Descrizione']}")
+                            # Imposta il campo Scaffale come numero intero positivo
+                                new_value = st.number_input(
+                                    "Stock", value=row["Stock"], min_value=0.0, step=0.01, key=f"{row['Key']}_stock"
+                                )
+                            # Aggiorna il valore nel session_state
+                            st.session_state["inventario"].at[row.name, "Stock"] = new_value
 
-if salva:
-    today = datetime.today()
-    today_formatted = today.strftime("%d/%m/%Y")
-    today_formatted = today_formatted.replace("/","_")
-    nome_file = "Inventario_"+today_formatted+".csv"
-    upload_dataframe_as_csv(st.session_state["inventario"],negozio,st.session_state["murale"]+"/Inventari",nome_file)
-    time.sleep(2)
-    st.rerun()
+            if salva:
+                today = datetime.today()
+                today_formatted = today.strftime("%d/%m/%Y")
+                today_formatted = today_formatted.replace("/","_")
+                nome_file = "Inventario_"+today_formatted+".csv"
+                upload_dataframe_as_csv(st.session_state["inventario"],negozio,st.session_state["murale"]+"/Inventari",nome_file)
+                time.sleep(2)
+                st.rerun()
+        else:
+            st.error("Nessun prodotto trovato.")
 
