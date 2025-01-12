@@ -38,10 +38,16 @@ directories = list_directory_contents(negozio, "")
 murali = [el.split("-")[-1] for el in directories if el != "Anagrafica" and el != "Inventario"]
 murale = st.selectbox("Scegli il Murale di referenza", murali, index=0)
 st.session_state["murale"] = f"murale-{murale}"
-anagrafica = read_csv_from_s3(negozio, "Anagrafica", "Anagrafica.csv",
-                              delimiter=",")  # qua ci deve stare l'anagrafica generica di tutti i murali
+anagrafica = read_csv_from_s3(negozio, "Anagrafica", "Anagrafica.csv", delimiter=",")  # qua ci deve stare l'anagrafica generica di tutti i murali
 
 st.session_state["offerte"] = read_csv_from_s3(negozio, f"{st.session_state['murale']}", "Promozioni.csv", ",")
+
+try:
+    if not anagrafica or anagrafica.empty:
+        anagrafica = read_csv_from_s3(negozio, "Anagrafica", "Anagrafica.csv", delimiter = ";")
+except:
+    pass
+
 
 st.session_state["anagrafica"] = anagrafica[anagrafica["Murale"] == int(murale)]
 
