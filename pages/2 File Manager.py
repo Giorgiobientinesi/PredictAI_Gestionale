@@ -30,7 +30,7 @@ if 'Light' not in st.session_state:
 
 with open("style.css") as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-        
+
 if st.session_state['Light'] == 'green':
     st.session_state["aggiorna_dati"] = 0
 
@@ -71,6 +71,8 @@ if st.session_state['Light'] == 'green':
 
 
     oggi = datetime.now()
+
+    st.write(oggi)
 
 
     date_intercorse = [(data_meno_recente + timedelta(days=i)).strftime('%d-%m-%Y')

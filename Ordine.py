@@ -189,7 +189,6 @@ if st.session_state['Light'] == 'green':
             giorni_previsionali = giorni_previsionali if weekend == "No" else int(giorni_previsionali)+2
             giorni_previsionali = int(giorni_previsionali)
 
-            st.write(giorni_previsionali)
 
             genera_previsione = st.button("Ordine")
 
