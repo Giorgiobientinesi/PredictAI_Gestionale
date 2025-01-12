@@ -8,7 +8,7 @@ from Utils import filter_dataframe, trova_data_file, pulisci_vendite_oggi, pulis
 from datetime import datetime, timedelta
 from prophet import Prophet
 import locale
-from st_aggrid import AgGrid, GridOptionsBuilder
+from st_aggrid import AgGrid, GridOptionsBuilder,GridUpdateMode
 from io import StringIO
 
 # Configurazione della pagina di Streamlit
@@ -346,10 +346,8 @@ if st.session_state["murale_numero"] != "":
                 grid_response = AgGrid(
                     st.session_state["genera_ordine"], 
                     gridOptions=grid_options, 
-                    editable=True,  # Abilita la modalità editabile sulla griglia
-                    GridUpdateMode='VALUE_CHANGED'
+                    update_mode=GridUpdateMode.VALUE_CHANGED  # Aggiorna solo quando i valori cambiano
                 )
-
 
 
                 dati_modificati = pd.DataFrame(grid_response['data']) if grid_response['data'] is not None else st.session_state["genera_ordine"]
