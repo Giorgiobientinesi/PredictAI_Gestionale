@@ -315,11 +315,11 @@ if st.session_state["murale_numero"] != "":
 
             genera_ordine = pd.DataFrame()
             genera_ordine["Key"] = chiavi
-            genera_ordine["Chiave"] = descrizioni
+            genera_ordine["Descrizione"] = descrizioni
             genera_ordine["Imballaggi"] = imballaggi
             genera_ordine["pacchi_da_ordinare"] = pacchi_da_ordinare
             genera_ordine["inventario"] = inventario
-            genera_ordine["previsioni_lista"] = previsioni_lista
+            genera_ordine["previsioni_vendite"] = previsioni_lista
             genera_ordine["prezzo_acquisto"] = prezzo_acquisto_lista
             genera_ordine["prezzo_vendita"] = prezzo_vendita_lista
 
@@ -338,11 +338,18 @@ if st.session_state["murale_numero"] != "":
 
                 #with st.popover("Visualizza e Modifica ordine",use_container_width=True):
                 grid_options = GridOptionsBuilder.from_dataframe(st.session_state["genera_ordine"])
-                grid_options.configure_column('pacchi_da_ordinare', editable=True)  # You can enable specific columns
-                grid_options = grid_options.build()
+                grid_options.configure_columns(st.session_state["genera_ordine"].columns, editable=False)  # Tutte le colonne non editabili
+                grid_options.configure_column('pacchi_da_ordinare', editable=True)  # Rendi modificabile solo questa colonna
+                grid_options = grid_options.build()  # Costruisci le opzioni dopo aver configurato le colonne
 
-                # Display the editable DataFrame
-                grid_response = AgGrid(st.session_state["genera_ordine"], editable=True,GridUpdateMode='VALUE_CHANGE')
+                # Visualizza il DataFrame modificabile
+                grid_response = AgGrid(
+                    st.session_state["genera_ordine"], 
+                    gridOptions=grid_options, 
+                    editable=True,  # Abilita la modalità editabile sulla griglia
+                    GridUpdateMode='VALUE_CHANGED'
+                )
+
 
 
                 dati_modificati = pd.DataFrame(grid_response['data']) if grid_response['data'] is not None else st.session_state["genera_ordine"]
@@ -354,10 +361,19 @@ if st.session_state["murale_numero"] != "":
                     output.write(line + '\n')
                 output = output.getvalue()
 
-                prezzo_totale_ordine = sum(dati_modificati["pacchi_da_ordinare"]*dati_modificati["prezzo_acquisto"]*dati_modificati["Imballaggi"])
 
-                st.markdown(f"**Il prezzo totale dell'ordine è di: _{prezzo_totale_ordine:.2f} €_**", unsafe_allow_html=True)
-                
+                dati_modificati["prezzo_acquisto"] = dati_modificati["prezzo_acquisto"].astype(str).str.replace(",",".").fillna(0).astype(float)
+                dati_modificati["pacchi_da_ordinare"] = dati_modificati["pacchi_da_ordinare"].astype(float)
+                dati_modificati["Imballaggi"] = dati_modificati["Imballaggi"].fillna(0).astype(float)
+
+
+
+                prezzo_totale_ordine = sum(dati_modificati["pacchi_da_ordinare"]*dati_modificati["prezzo_acquisto"]*dati_modificati["Imballaggi"])
+                valore_inventario_attuale = sum(dati_modificati["inventario"]*dati_modificati["prezzo_acquisto"])
+
+
+                st.markdown(f"<p style='color:orange; font-weight:bold;'>Il prezzo totale dell'ordine è di: {prezzo_totale_ordine:.2f} €</p>", unsafe_allow_html=True)                
+                st.markdown(f"<p style='color:green; font-weight:bold;'>Il valore dell'inventario attuale è di: {valore_inventario_attuale:.2f} €</p>", unsafe_allow_html=True)                
                 # Fornisci il file scaricabile
                 st.download_button(
                     label="Download File Terminalino",
