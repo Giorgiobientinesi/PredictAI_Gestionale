@@ -72,7 +72,6 @@ if st.session_state['Light'] == 'green':
 
     oggi = datetime.now()
 
-    st.write(oggi)
 
 
     date_intercorse = [(data_meno_recente + timedelta(days=i)).strftime('%d-%m-%Y')
