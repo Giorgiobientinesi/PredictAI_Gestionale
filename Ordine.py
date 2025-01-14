@@ -386,7 +386,7 @@ if st.session_state['Light'] == 'green':
                     st.download_button(
                         label="Download File Terminalino",
                         data=output,
-                        file_name="cosi infernetto.txt",
+                        file_name="cosi infernetto",
                         mime="text/plain"
                     )
 
