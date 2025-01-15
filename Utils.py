@@ -386,8 +386,9 @@ def terminalino(ordine):
     # Estrai `cod. articolo`, `variante`, e `quantità` dal DataFrame ordine
     ordine['cod. articolo'] = ordine['Key'].apply(lambda x: x.split('-')[0].zfill(6))
     ordine['variante'] = ordine['Key'].apply(lambda x: x.split('-')[1].zfill(2))
-    ordine['quantità'] = ordine['pacchi_da_ordinare'].apply(lambda x: str(x).zfill(5) + "00")
-
+    ordine['quantità'] = ordine['pacchi_da_ordinare'].apply(
+        lambda x: f"{int(float(x)):05d}00" if "." in str(x) else str(x).zfill(5) + "00"
+    )
     data_oggi = datetime.now().strftime('%d%m%Y').zfill(8)
     ora_adesso = datetime.now().strftime('%H%M').zfill(4)
 
@@ -425,7 +426,7 @@ def terminalino(ordine):
             ordine_automatico['tipo ean'].astype(str) +
             ordine_automatico['cod. articolo'].astype(str) +
             ordine_automatico['variante'].astype(str) +
-            ordine_automatico['quantità'].astype(str).replace(".","")
+            ordine_automatico['quantità'].astype(str)
     )
 
     return ordine_automatico

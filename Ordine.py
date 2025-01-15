@@ -346,22 +346,13 @@ if st.session_state['Light'] == 'green':
                     st.markdown("""<div style="text-align: center; margin: 50px 0;"><p style="font-size: 16px; color: #555;">Scorri per visualizzare e modificare l'ordine</p><div style="animation: bounce 1.5s infinite;"><span style="font-size: 32px; color: #888;">&#8595;</span></div></div><style>@keyframes bounce {0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);}60% {transform: translateY(-5px);}}</style>""",unsafe_allow_html=True)
                     st.subheader("Gestisci ordine")
 
-                    #with st.popover("Visualizza e Modifica ordine",use_container_width=True):
-                    grid_options = GridOptionsBuilder.from_dataframe(st.session_state["genera_ordine"])
-                    grid_options.configure_columns(st.session_state["genera_ordine"].columns, editable=False)  # Tutte le colonne non editabili
-                    grid_options.configure_column('pacchi_da_ordinare', editable=True)  # Rendi modificabile solo questa colonna
-                    grid_options = grid_options.build()  # Costruisci le opzioni dopo aver configurato le colonne
-
-                    # Visualizza il DataFrame modificabile
-                    grid_response = AgGrid(
-                        st.session_state["genera_ordine"], 
-                        gridOptions=grid_options, 
-                        update_mode=GridUpdateMode.VALUE_CHANGED  # Aggiorna solo quando i valori cambiano
+                    edited_df = st.data_editor(
+                        st.session_state["genera_ordine"],
+                        use_container_width=True,  # Adatta il componente alla larghezza della finestra
+                        disabled=[col for col in st.session_state["genera_ordine"].columns if col != "pacchi_da_ordinare"]  # Disabilita tutte le altre colonne
                     )
 
-
-                    dati_modificati = pd.DataFrame(grid_response['data']) if grid_response['data'] is not None else st.session_state["genera_ordine"]
-
+                    dati_modificati = edited_df.copy()
 
                     ordine_automatico = terminalino(dati_modificati)
                     output = StringIO()
@@ -398,6 +389,8 @@ if st.session_state['Light'] == 'green':
                         file_name="PredictAI_ordine_{}.xlsx".format(oggi.strftime("%d-%m-%Y")),
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     )
+
+
 
 
 else:
