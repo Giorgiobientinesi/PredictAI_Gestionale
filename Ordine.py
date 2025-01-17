@@ -51,6 +51,8 @@ if "terminalino" not in st.session_state:
     st.session_state["terminalino"] = 0
 if 'Light' not in st.session_state:
     st.session_state['Light'] = 'red'
+if 'giorni_previsionali' not in st.session_state:
+    st.session_state["giorni_previsionali"] = 4
 
 if st.session_state['Light'] == 'green':
 
@@ -189,6 +191,7 @@ if st.session_state['Light'] == 'green':
             giorni_previsionali = giorni_previsionali if weekend == "No" else int(giorni_previsionali)+2
             giorni_previsionali = int(giorni_previsionali)
 
+            st.session_state["giorni_previsionali"] = giorni_previsionali
 
             genera_previsione = st.button("Ordine")
 
@@ -212,7 +215,7 @@ if st.session_state['Light'] == 'green':
                         vendite_prodotto = st.session_state["vendite_storiche"][st.session_state["vendite_storiche"]["Key"] == key].reset_index(drop=True)
                         descrizione_prodotto = vendite_prodotto["Descrizione"].iloc[0]
                         if key in list(st.session_state["offerte"]["Key"]):
-                            giorni_previsionali +=2
+                            giorni_previsionali = st.session_state["giorni_previsionali"] + 2
 
                         scaffale = Murale[Murale["Key"]==key]["Scaffale"].iloc[0]
                         if scaffale == 999:
@@ -244,7 +247,10 @@ if st.session_state['Light'] == 'green':
                                 previsione = sum(prophet_forecast["yhat"].iloc[-giorni_previsionali:])
                             except:
                                 st.write("Errore Prophet")
+                                merged_df['y'] = merged_df['y'].fillna(0)
                                 previsione = sum(merged_df['y'].rolling(window=50).mean().tail(giorni_previsionali))
+
+
                             #st.write(previsione)
                             if previsione > 0:
                                 previsioni.append(previsione)
