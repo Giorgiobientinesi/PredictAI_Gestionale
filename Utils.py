@@ -1,4 +1,6 @@
 import re
+import time
+
 import pandas as pd
 from datetime import date
 import datetime
@@ -243,15 +245,25 @@ def mostra_promozioni(promozioni, tipo):
         for j, col in enumerate(cols):
             if i + j < len(promozioni):
                 row = promozioni.iloc[i + j]
-                col.markdown(
-                    f"""
-                    <div class="promo-card {tipo}">
-                        <h4>{row['Descrizione']}</h4>
-                        <p>Dal: {row['Data_inizio'].strftime('%d %b %Y')} al {row['Data_fine'].strftime('%d %b %Y')}</p>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
+                with col:
+                    st.markdown(
+                        f"""
+                        <div class="promo-card {tipo}">
+                            <h4>{row['Descrizione']}</h4>
+                            <p>Dal: {row['Data_inizio'].strftime('%d %b %Y')} al {row['Data_fine'].strftime('%d %b %Y')}</p>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+
+                    if st.button("Elimina", key=f"elimina_futura_{row['Data_inizio']} {row['Data_fine']} {row.ID}"):
+                        negozio = "todis-viacastelporziano294"
+
+                        st.session_state["offerte"] = st.session_state["offerte"][st.session_state["offerte"]['ID'] != row.ID]
+                        upload_dataframe_as_csv(st.session_state["offerte"], negozio, st.session_state["murale"], "Promozioni.csv")
+                        st.success("Offerta cancellata correttamente!")
+                        time.sleep(2)
+                        st.rerun()
 
 
 def master_job_aggiornamento():
