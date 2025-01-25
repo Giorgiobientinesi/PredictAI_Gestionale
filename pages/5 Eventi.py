@@ -61,13 +61,21 @@ if st.session_state['Light'] == 'green':
 
     with tabs[0]:
         with st.container(border=True):
-            
 
+            chiave_prodotto = st.multiselect(
+                "Inserisci la chiave prodotto:",
+                options=st.session_state["anagrafica"]['Key'],
+                default=None
+            )
 
+            descrizione_prodotti = st.session_state["anagrafica"].set_index('Key').loc[chiave_prodotto]['Descrizione']
+
+            if descrizione_prodotti.empty:
+               descrizione_prodotti = st.session_state["anagrafica"]['Descrizione']
 
             prodotti_selezionati = st.multiselect(
                 "Seleziona i prodotti per la promozione:",
-                options=st.session_state["anagrafica"]['Descrizione'],
+                options=descrizione_prodotti,
                 default=None
             )
             data_inizio = st.date_input(
@@ -86,11 +94,19 @@ if st.session_state['Light'] == 'green':
                 elif data_fine < data_inizio:
                     st.error("La data di fine deve essere uguale o successiva alla data di inizio.")
                 else:
+                    id = []
+                    count = st.session_state['offerte']["ID"].max()
+                    for i in prodotti_selezionati:
+                        count += 1
+                        id.append(int(count))
+
                     promozione_df = pd.DataFrame({
+                        'ID': id,
                         'Descrizione': prodotti_selezionati,
                         'Data_inizio': [data_inizio] * len(prodotti_selezionati),
                         'Data_fine': [data_fine] * len(prodotti_selezionati)
                     })
+
                     st.success("Promozione creata con successo!")
                     st.dataframe(promozione_df)
 
@@ -103,7 +119,7 @@ if st.session_state['Light'] == 'green':
                         how="left"
                     )
 
-                    promozioni_to_upload = promozioni_to_upload[["Key","Descrizione","Data_inizio","Data_fine"]]
+                    promozioni_to_upload = promozioni_to_upload[["ID", "Key","Descrizione","Data_inizio","Data_fine"]]
                     st.session_state["offerte"] = pd.concat([st.session_state["offerte"],promozioni_to_upload],axis=0)
                     upload_dataframe_as_csv(st.session_state["offerte"], negozio,
                                             st.session_state["murale"], "Promozioni.csv")
