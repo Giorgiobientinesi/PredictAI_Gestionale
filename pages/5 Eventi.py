@@ -42,7 +42,11 @@ if st.session_state['Light'] == 'green':
     st.session_state["murale"] = f"murale-{murale}"
     anagrafica = read_csv_from_s3(negozio, "Anagrafica", "Anagrafica.csv", delimiter=",")  # qua ci deve stare l'anagrafica generica di tutti i murali
 
+    
     st.session_state["offerte"] = read_csv_from_s3(negozio, f"{st.session_state['murale']}", "Promozioni.csv", ",")
+    if len(st.session_state["offerte"].columns) < 2:
+        st.session_state["offerte"] = read_csv_from_s3(negozio, f"{st.session_state['murale']}", "Promozioni.csv", ";")
+
 
     try:
         if not anagrafica or anagrafica.empty:
@@ -57,6 +61,8 @@ if st.session_state['Light'] == 'green':
 
     with tabs[0]:
         with st.container(border=True):
+            
+
 
 
             prodotti_selezionati = st.multiselect(
