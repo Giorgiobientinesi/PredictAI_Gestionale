@@ -151,18 +151,21 @@ if st.session_state['Light'] == 'green':
                             except:
                                 st.warning("Errore nel caricamento del file. Controlla che il file sia corretto.")
 
-                            giorno = giorno.replace("/","_")
-                            nome_file_s3 = f"Vendite_{giorno}.CSV"  # Adatta l'estensione se necessario
-                            nome_file_s3_pulito = f"Vendite_{giorno}.csv"  # Adatta l'estensione se necessario
+                            if len(df_pulito) > 5:
+                                giorno = giorno.replace("/","_")
+                                nome_file_s3 = f"Vendite_{giorno}.CSV"  # Adatta l'estensione se necessario
+                                nome_file_s3_pulito = f"Vendite_{giorno}.csv"  # Adatta l'estensione se necessario
 
-                            st.dataframe(st.session_state["file_temp_vendite_pulito"])
+                                st.dataframe(st.session_state["file_temp_vendite_pulito"])
 
-                            upload_dataframe_as_csv(st.session_state["file_temp_vendite"], negozio, "{}/Vendite_giornaliere".format(st.session_state["murale"]), nome_file_s3)
-                            upload_dataframe_as_csv(st.session_state["file_temp_vendite_pulito"], negozio, "{}/Vendite_giornaliere_pulite".format(st.session_state["murale"]), nome_file_s3_pulito)
+                                upload_dataframe_as_csv(st.session_state["file_temp_vendite"], negozio, "{}/Vendite_giornaliere".format(st.session_state["murale"]), nome_file_s3)
+                                upload_dataframe_as_csv(st.session_state["file_temp_vendite_pulito"], negozio, "{}/Vendite_giornaliere_pulite".format(st.session_state["murale"]), nome_file_s3_pulito)
 
-                            st.rerun()
-                        else:
-                            st.error("Il file caricato non è valido.")
+                                st.rerun()
+                            else:
+                                st.error("Il file caricato non è valido.")
+                            else:
+                                st.error("Il file caricato non è valido.")
 
 
 
@@ -260,32 +263,33 @@ if st.session_state['Light'] == 'green':
                                     except:
                                         pass
 
-                                    
-                                    giorno = giorno.replace("/", "_")
-                                    nome_file_s3 = f"Acquisti_{giorno}.csv"
-                                    
-                                    
-                                    upload_dataframe_as_csv(
-                                        st.session_state["file_temp_acquisti_pulito"],
-                                        negozio,
-                                        f"{st.session_state['murale']}/Acquisti_giornalieri_puliti",
-                                        nome_file_s3,
-                                    )
+                                    if len(df_pulito) > 5:
+                                        giorno = giorno.replace("/", "_")
+                                        nome_file_s3 = f"Acquisti_{giorno}.csv"
+                                        
+                                        
+                                        upload_dataframe_as_csv(
+                                            st.session_state["file_temp_acquisti_pulito"],
+                                            negozio,
+                                            f"{st.session_state['murale']}/Acquisti_giornalieri_puliti",
+                                            nome_file_s3,
+                                        )
 
-                                    upload_dataframe_as_csv(
-                                        st.session_state["uploaded_file_acquisti"],
-                                        negozio,
-                                        f"{st.session_state['murale']}/Acquisti_giornalieri",
-                                        nome_file_s3,
-                                    )
-                                    
-                                    nuova_riga = pd.DataFrame([{"Numeri": num_fattura}])
-                                    fatture_esistenti = pd.concat([fatture_esistenti, nuova_riga], ignore_index=True)
-                                    fatture_esistenti.to_excel("files_utili/fatture.xlsx",index=False)
+                                        upload_dataframe_as_csv(
+                                            st.session_state["uploaded_file_acquisti"],
+                                            negozio,
+                                            f"{st.session_state['murale']}/Acquisti_giornalieri",
+                                            nome_file_s3,
+                                        )
+                                        
+                                        nuova_riga = pd.DataFrame([{"Numeri": num_fattura}])
+                                        fatture_esistenti = pd.concat([fatture_esistenti, nuova_riga], ignore_index=True)
+                                        fatture_esistenti.to_excel("files_utili/fatture.xlsx",index=False)
 
-                                    st.rerun()
+                                        st.rerun()
+                                    else:
+                                        st.error("Il file caricato non è valido.")
                                 else:
                                     st.error("Il file caricato non è valido.")
-
 else:
     st.subheader("Vai a pagina login per accedere!")
