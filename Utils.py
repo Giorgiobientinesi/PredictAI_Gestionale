@@ -104,6 +104,97 @@ def pulisci_fattura_oggi(file):
         return acquisti_oggi
 
 
+
+def pulisci_fattura_per_anagrafica(file,murale,file_concatenazione):
+    try:
+        acquisti_oggi = file.dropna(subset=['Articolo'])
+        acquisti_oggi.columns = acquisti_oggi.columns.str.replace(' ', '')
+        acquisti_oggi['Cod.'] = acquisti_oggi['Cod.'].str.replace('.', '', regex=False)
+        acquisti_oggi['Cod.'] = acquisti_oggi['Cod.'].str.replace(',', '.', regex=False).astype(float).astype(int)
+        acquisti_oggi['Diff.'] = acquisti_oggi['Diff.'].str.replace('.', '', regex=False)
+        acquisti_oggi['Diff.'] = acquisti_oggi['Diff.'].str.replace(',', '.', regex=False).astype(float).astype(int)
+        acquisti_oggi["Diff."] = acquisti_oggi["Diff."].astype(int)
+        acquisti_oggi["Key"] = acquisti_oggi["Cod."].astype("str") + "-" + acquisti_oggi["Diff."].astype("str")
+        acquisti_oggi.rename(columns={'Qta': 'Quantità'}, inplace=True)
+        acquisti_oggi['Quantità'] = acquisti_oggi['Quantità'].str.replace(',', '.').str.strip().astype(float)
+
+
+        if file_concatenazione == "anagrafica":
+            acquisti_oggi = acquisti_oggi[["Key", "Articolo", "Imb.","Przunitario","Przconsigliato"]]
+            acquisti_oggi["Przunitario"] = (
+                acquisti_oggi["Przunitario"]
+                .str.encode("latin1")  # Codifica originale
+                .str.decode("utf-8")  # Decodifica corretta
+                .str.replace("€", "", regex=False)  # Rimuove il simbolo euro
+            )
+            acquisti_oggi["Przconsigliato"] = (
+                acquisti_oggi["Przconsigliato"]
+                .str.encode("latin1")  # Codifica originale
+                .str.decode("utf-8")  # Decodifica corretta
+                .str.replace("€", "", regex=False)  # Rimuove il simbolo euro
+            )
+            acquisti_oggi["Przunitario"] = acquisti_oggi["Przunitario"].str.replace("â¬", "", regex=False)
+            acquisti_oggi["Przconsigliato"] = acquisti_oggi["Przconsigliato"].str.replace("â¬", "", regex=False)
+            acquisti_oggi = acquisti_oggi.rename(columns={'Articolo': 'Descrizione', 'Przunitario': 'Prezzo Acquisto','Przconsigliato':'Prezzo Vendita'})
+            acquisti_oggi["Scaffale"] = 999
+            acquisti_oggi["Murale"] = murale
+            acquisti_oggi = acquisti_oggi[["Key","Descrizione","Imb.","Scaffale","Murale","Prezzo Acquisto","Prezzo Vendita"]]               
+            
+            return acquisti_oggi
+        else:
+            acquisti_oggi = acquisti_oggi[["Key", "Articolo", "Quantità"]]
+            acquisti_oggi = acquisti_oggi.rename(columns={'Articolo': 'Descrizione',"Quantità":"Stock"})
+            acquisti_oggi["UM"] = "PZ"
+            acquist_oggi = acquisti_oggi[["Key","Descrizione","UM","Stock"]]
+            acquisti_oggi = acquisti_oggi.groupby(["Key","Descrizione","UM"]).sum().reset_index()
+            return acquisti_oggi
+    except Exception as e:
+        st.write(e)
+        acquisti_oggi = acquisti_oggi.dropna(subset=['Articolo'])
+        acquisti_oggi['Cod.'] = acquisti_oggi['Cod.'].fillna("").astype(str)
+        acquisti_oggi['Cod.'] = pd.to_numeric(acquisti_oggi['Cod.'], errors='coerce').astype(int)
+        acquisti_oggi['Diff.'] = acquisti_oggi['Diff.'].fillna("").astype(str)
+        acquisti_oggi['Diff.'] = pd.to_numeric(acquisti_oggi['Diff.'], errors='coerce').astype(int)
+
+        acquisti_oggi["Key"] = acquisti_oggi["Cod."].astype("str") + "-" + acquisti_oggi["Diff."].astype("str")
+        acquisti_oggi.rename(columns={'Qta': 'Quantità'}, inplace=True)
+        acquisti_oggi['Quantità'] = acquisti_oggi['Quantità'].str.replace(',', '.').str.strip().astype(float)
+
+
+        if file_concatenazione == "anagrafica":
+            acquisti_oggi = acquisti_oggi[["Key", "Articolo", "Imb.","Przunitario","Przconsigliato"]]
+            acquisti_oggi["Przunitario"] = (
+                acquisti_oggi["Przunitario"]
+                .str.encode("latin1")  # Codifica originale
+                .str.decode("utf-8")  # Decodifica corretta
+                .str.replace("€", "", regex=False)  # Rimuove il simbolo euro
+            )
+            acquisti_oggi["Przconsigliato"] = (
+                acquisti_oggi["Przconsigliato"]
+                .str.encode("latin1")  # Codifica originale
+                .str.decode("utf-8")  # Decodifica corretta
+                .str.replace("€", "", regex=False)  # Rimuove il simbolo euro
+            )
+
+            acquisti_oggi["Przunitario"] = acquisti_oggi["Przunitario"].str.replace("â¬", "", regex=False)
+            acquisti_oggi["Przconsigliato"] = acquisti_oggi["Przconsigliato"].str.replace("â¬", "", regex=False)
+        
+            acquisti_oggi = acquisti_oggi.rename(columns={'Articolo': 'Descrizione', 'Przunitario': 'Prezzo Acquisto','Przconsigliato':'Prezzo Vendita'})
+            acquisti_oggi["Scaffale"] = 999
+            acquisti_oggi["Murale"] = murale
+            acquisti_oggi = acquisti_oggi[["Key","Descrizione","Imb.","Scaffale","Murale","Prezzo Acquisto","Prezzo Vendita"]]    
+            return acquisti_oggi
+        else:
+            acquisti_oggi = acquisti_oggi[["Key", "Articolo", "Quantità"]]
+            acquisti_oggi = acquisti_oggi.rename(columns={'Articolo': 'Descrizione',"Quantità":"Stock"})
+            acquisti_oggi["UM"] = "PZ"
+            acquisti_oggi = acquisti_oggi[["Key","Descrizione","UM","Stock"]]
+            acquisti_oggi = acquisti_oggi.groupby(["Key","Descrizione","UM"]).sum().reset_index()
+            return acquisti_oggi
+
+  
+
+
 def aggiorna_vendite_storiche(vendite_storiche,vendite_oggi,oggi):
     if len(vendite_storiche[
                vendite_storiche["Data"] == oggi]) == 0:  # Se non sono gia state aggiornate con le vendite di oggi
