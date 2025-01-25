@@ -27,6 +27,7 @@ def initialize_s3():
     return s3
 
 
+
 def read_csv_from_s3(bucket_name, directory, file_name,delimiter):
     s3 = initialize_s3()
     if s3 is None:

@@ -44,7 +44,7 @@ if st.session_state['Light'] == 'green':
     st.session_state["anagrafica"]["Imb."] = st.session_state["anagrafica"]["Imb."].fillna(0) #QUESTO CI DEVE GIA ESSERE
 
     # Barra di ricerca
-    search_text = st.text_input("Cerca prodotto per descrizione:")
+    search_text = st.text_input("Cerca prodotto per descrizione e chiave:")
     # Filtra il DataFrame in base al testo della ricerca
     filtered_df = filter_dataframe(search_text,st.session_state["anagrafica"])
 

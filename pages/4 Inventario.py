@@ -29,7 +29,7 @@ if st.session_state['Light'] == 'green':
     st.title("Inventario Prodotti supermercato")
     negozio = "todis-viacastelporziano294"
     # Barra di ricerca
-    search_text = st.text_input("Cerca prodotto per descrizione:")
+    search_text = st.text_input("Cerca prodotto per descrizione e chiave:")
 
 
     # Schede per ciascun valore unico di "Murale"
