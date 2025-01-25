@@ -38,6 +38,9 @@ if st.session_state['Light'] == 'green':
         pass
 
     st.session_state["anagrafica"] = anagrafica
+
+    st.session_state["anagrafica"] = st.session_state["anagrafica"].drop_duplicates(subset="Key", keep="first")
+
     st.session_state["anagrafica"]["Imb."] = st.session_state["anagrafica"]["Imb."].fillna(0) #QUESTO CI DEVE GIA ESSERE
 
     # Barra di ricerca

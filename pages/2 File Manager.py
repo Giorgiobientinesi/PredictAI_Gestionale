@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import csv
 from Connessioni_S3 import read_csv_from_s3, upload_dataframe_as_csv, create_directory, list_directory_contents
 import pandas as pd
-from Utils import filter_dataframe, trova_data_file, pulisci_vendite_oggi, pulisci_fatture_oggi, master_job_aggiornamento,aggiorna_vendite_storiche, genera_previsione, pulisci_fattura_oggi
+from Utils import filter_dataframe, trova_data_file, pulisci_vendite_oggi, pulisci_fatture_oggi, master_job_aggiornamento,aggiorna_vendite_storiche, genera_previsione, pulisci_fattura_oggi,pulisci_fattura_per_anagrafica,load_inventario
 from datetime import datetime
 import streamlit_antd_components as sac
 
@@ -27,6 +27,11 @@ if "aggiorna_dati" not in st.session_state:
     st.session_state["aggiorna_dati"] = 0
 if 'Light' not in st.session_state:
     st.session_state['Light'] = 'red'
+if "anagrafica" not in st.session_state:
+    st.session_state["anagrafica"] = pd.DataFrame()
+if "invetario" not in st.session_state:
+    st.session_state["inventario"] = pd.DataFrame()
+
 
 with open("style.css") as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
@@ -51,11 +56,16 @@ if st.session_state['Light'] == 'green':
     directories = list_directory_contents(negozio, "")
 
     st.session_state["murale"] = tables
+    st.session_state["murale_numero"] = int(st.session_state["murale"].split("-")[-1])
 
     files_inventario = list_directory_contents(negozio, f"{st.session_state['murale']}/Inventari")
     file_piu_recente_inventario = max(files_inventario, key=trova_data_file)
     data_piu_recente_inventario = trova_data_file(file_piu_recente_inventario)
     data_piu_recente_inventario = data_piu_recente_inventario.date()  # Prendi solo la data
+
+    inventario_df = load_inventario(st.session_state["murale"])
+
+    st.session_state["inventario"] = inventario_df
 
 
     files_vendite = list_directory_contents(negozio, f"{st.session_state['murale']}/Storico_Vendite")
@@ -73,7 +83,6 @@ if st.session_state['Light'] == 'green':
     oggi = datetime.now()
 
 
-
     date_intercorse = [(data_meno_recente + timedelta(days=i)).strftime('%d-%m-%Y')
                     for i in range(0,(oggi - data_meno_recente).days + 1)]
 
@@ -81,6 +90,18 @@ if st.session_state['Light'] == 'green':
     date_file_acquisti = [trova_data_file(el).strftime("%d-%m-%Y") for el in files_acquisti]
 
     st.subheader("L'inventario è aggiornato al " + str(data_piu_recente_inventario.strftime("%d-%m-%Y")))
+
+    anagrafica = read_csv_from_s3(negozio,"Anagrafica","Anagrafica.csv",delimiter=",")  #qua ci deve stare l'anagrafica generica di tutti i murali
+    try:
+        if not anagrafica or anagrafica.empty:
+            anagrafica = read_csv_from_s3(negozio, "Anagrafica", "Anagrafica.csv",
+                                        delimiter=";")  # qua ci deve stare l'anagrafica generica di tutti i murali
+    except:
+        pass
+
+
+    st.session_state["anagrafica"] = anagrafica
+
 
     Salva = st.button("Salva tutto")
     if Salva:
@@ -206,19 +227,43 @@ if st.session_state['Light'] == 'green':
                                     except:
                                         df = pd.read_csv(st.session_state["uploaded_file_acquisti"], sep=";", encoding='latin-1')
                                     
+                                    
                                     st.session_state["uploaded_file_acquisti"] = df
 
                                     try:
-
                                         df_pulito = pulisci_fattura_oggi(df)
                                         st.session_state["file_temp_acquisti_pulito"] = df_pulito
                                         st.session_state["file_temp_acquisti_pulito"]["fattura"] = num_fattura
+                                        st.session_state["anagrafica"] = st.session_state["anagrafica"].drop_duplicates(subset="Key", keep="first")
                                     except:
                                         st.warning("Errore nel caricamento del file. Controlla che il file sia corretto.")
+                                    
+                                    try:
+                                        df_per_anagrafica = pulisci_fattura_per_anagrafica(df,st.session_state["murale_numero"],"anagrafica")
+                                        df_per_inventario = pulisci_fattura_per_anagrafica(df,st.session_state["murale_numero"],"inventario")
 
+                                        
+                                        for key in list(df_per_anagrafica["Key"]):
+                                            if key not in list(st.session_state["anagrafica"]["Key"]):
+                                                filtered = df_per_anagrafica[df_per_anagrafica["Key"]==key]
+                                                st.session_state["anagrafica"] = pd.concat([st.session_state["anagrafica"],filtered])
+                                                upload_dataframe_as_csv(st.session_state["anagrafica"], negozio, "Anagrafica",
+                                                                "Anagrafica.csv")
 
+                                        for key in list(df_per_inventario["Key"]):
+                                            if key not in list(st.session_state["inventario"]["Key"]):
+                                                filtered = df_per_inventario[df_per_inventario["Key"]==key]
+                                                st.session_state["inventario"] = pd.concat([st.session_state["inventario"],filtered])
+                                                upload_dataframe_as_csv(st.session_state["inventario"], negozio,
+                                                    st.session_state["murale"] + "/Inventari", file_piu_recente_inventario)
+
+                                    except:
+                                        pass
+
+                                    
                                     giorno = giorno.replace("/", "_")
                                     nome_file_s3 = f"Acquisti_{giorno}.csv"
+                                    
                                     
                                     upload_dataframe_as_csv(
                                         st.session_state["file_temp_acquisti_pulito"],
@@ -235,7 +280,6 @@ if st.session_state['Light'] == 'green':
                                     )
                                     
                                     nuova_riga = pd.DataFrame([{"Numeri": num_fattura}])
-                                    st.write(nuova_riga)
                                     fatture_esistenti = pd.concat([fatture_esistenti, nuova_riga], ignore_index=True)
                                     fatture_esistenti.to_excel("files_utili/fatture.xlsx",index=False)
 
@@ -245,5 +289,3 @@ if st.session_state['Light'] == 'green':
 
 else:
     st.subheader("Vai a pagina login per accedere!")
-
-
