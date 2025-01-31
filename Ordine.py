@@ -85,19 +85,30 @@ if st.session_state['Light'] == 'green':
         file_piu_recente_inventario = max(files_inventario, key=trova_data_file)
         data_piu_recente_inventario = trova_data_file(file_piu_recente_inventario)
         data_piu_recente_inventario = data_piu_recente_inventario.date()  # Prendi solo la data
+
+
         ultimo_inventario = read_csv_from_s3(
             negozio,
             f"{st.session_state['murale']}/Inventari",
             file_piu_recente_inventario,
             ","
         )
-        if len(ultimo_inventario.columns) < 2:
-            ultimo_inventario = read_csv_from_s3(
+
+        try:
+            if ultimo_inventario == None:
+                ultimo_inventario = read_csv_from_s3(
                 negozio,
                 f"{st.session_state['murale']}/Inventari",
                 file_piu_recente_inventario,
                 ";"
             )
+            try:
+                ultimo_inventario["Stock"] = ultimo_inventario["Stock"].str.replace(",",".")
+                ultimo_inventario["Stock"] = ultimo_inventario["Stock"].astype(float)
+            except:
+                pass
+        except:
+            pass
 
         ultimo_inventario.loc[ultimo_inventario["Stock"] < 0, "Stock"] = 0
 
